@@ -8,10 +8,10 @@
 
 3. Активируйте виртуальное окружение
 
-4. Установите библиотеки `Flask`, `Flask-SqlAlchemy` и `Flask-Migrate`:
+4. Установите необходимые библиотеки используя список из `requirements.txt`:
 
 ```powershell
-pip install flask flask-migrate flask-sqlalchemy
+pip install -r requirements.txt
 ```
 
 5. Разрешите отладку:
@@ -28,20 +28,47 @@ $ENV:FLASK_DEBUG=1
 set FLASK_DEBUG=1
 ```
 
+## Сессии
+
+Добавьте в базовый шаблон навигационную панель.
+
+Добавьте страницу аутентификации.
+
+Проверьте работу.
+
+Сделайте коммит.
+
+## Проверка данных и обработка ошибок
+
+Исправьте страницу аутентификации.
+
+Проверьте работу.
+
+Сделайте коммит.
+
 ## Создание админки
+
+Установите расширение `Flask-Admin`.
+
+Добавьте ссылку на админку.
+
+Проверьте работу.
+
+Сделайте коммит.
 
 ## Создание связей между таблицами
 
-## 
+Создайте новую таблицу .
 
-## 
+Проверьте работу.
 
-## 
+Сделайте коммит.
 
 ## Ссылки
 
 * [Документация Flask](https://flask.palletsprojects.com/)
 * [Документация Flask-SqlAlchemy](https://flask-sqlalchemy.palletsprojects.com/)
 * [Документация Flask-Migrate](https://flask.palletsprojects.com/)
+* [Документация Flask-Admin](https://flask-admin.readthedocs.io/)
 * [Документация SqlAlchemy](https://www.sqlalchemy.org/)
 * [Документация Alembic](https://alembic.sqlalchemy.org/)
