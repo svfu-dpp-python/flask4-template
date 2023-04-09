@@ -8,6 +8,9 @@ from . import views
 
 
 def create_app():
+    """
+    Создание приложения Flask
+    """
     app = Flask(__name__)
 
     # База данных

@@ -4,28 +4,50 @@
 
 1. Откройте каталог проекта в редакторе VS Code
 
-2. Создайте виртуальное окружение
+2. Создайте и активируйте виртуальное окружение 
 
-3. Активируйте виртуальное окружение
+Powershell:
 
-4. Установите необходимые библиотеки используя список из `requirements.txt`:
+```powershell
+py -m venv venv
+venv\scripts\activate.ps1
+```
+
+Командная строка:
+
+```cmd
+py -m venv venv
+venv\scripts\activate.bat
+```
+
+3. Установите библиотеки используя список из `requirements.txt`:
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-5. Разрешите отладку:
+4. Инициализируйте базу данных:
 
-Для включения отладки в Powershell:
+```powershell
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade
+```
+
+5. Разрешите отладку и запустите веб-сервер разработчика:
+
+Powershell:
 
 ```powershell
 $ENV:FLASK_DEBUG=1
+flask run
 ```
 
-Для включения отладки в командной строке:
+Командная строка:
 
 ```cmd
 set FLASK_DEBUG=1
+flask run
 ```
 
 ## Сессии

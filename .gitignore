@@ -1,4 +1,6 @@
 .vscode/
 .idea/
+instance/
+migrations/
 *.pyc
 venv/
