@@ -1,3 +1,17 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
 }
+
+.menu {
+    text-align: right;
+}
+
+.row {
+    display: flex;
+    margin: 5px;
+    gap: 5px;
+}
+
+.row label {
+    width: 60px;
+}

@@ -6,7 +6,6 @@ from . import views
 
 def create_app():
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = "secret"
 
     # База данных
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
