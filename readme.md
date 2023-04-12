@@ -54,19 +54,75 @@ flask run
 
 1. Добавьте страницу аутентификации
 
-Добавьте шаблон `login.html`:
+  a. Добавьте шаблон `login.html`:
 
-Добавьте функцию `login_page()`:
+```html
+{% extends 'base.html' %}
 
-Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
+{% block content %}
+<h1>Вход на сайт</h1>
+<form method="post">
 
-Добавьте соответствующее правило для URL в `create_app()`.
+    <div class="row">
+        <label>Логин</label>
+        <input type="text" name="username" value="{{ username }}">
+    </div>
 
-Добавьте в базовый шаблон навигационную панель
+    <div class="row">
+        <label>Пароль</label>
+        <input type="password" name="password">
+    </div>
+
+    <div class="row">
+        <input type="submit" value="Войти">
+        <a href="{{ url_for('index_page') }}">Отмена</a>
+    </div>
+</form>
+{% endblock %}
+```
+
+  b. Добавьте функцию `login_page()`:
+
+```python
+def login_page():
+    username = ""
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username == "admin" and password == "pass":
+            session["username"] = username
+            return redirect(url_for("index_page"))
+    return render_template("login.html", username=username)
+```
+
+  c. Добавьте функцию `logout()`:
+
+```python
+def logout():
+    session.pop("username")
+    return redirect(url_for("index_page"))
+```
+
+  d. Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
+
+```python
+app.config["SECRET_KEY"] = "secret"
+```
+
+  e. Добавьте соответствующие правила для URL в `create_app()`:
+
+```python
+app.add_url_rule("/login/", view_func=views.login_page, methods=["GET", "POST"])
+app.add_url_rule("/logout/", view_func=views.logout)
+```
+
+  f. Добавьте в базовый шаблон навигационную панель
 
 2. Проверьте работу механизма аутентификации
 
-3. Проверьте что удаление Cookie приводит к очистке данных сессии
+3. Удалите Cookie и проверьте что это приводит к очистке данных сессии:
+
+![Очистка Cookie](img/cookie.png)
 
 4. Сделайте коммит
 
