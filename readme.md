@@ -52,9 +52,7 @@ flask run
 
 ## Сессии
 
-1. Добавьте страницу аутентификации
-
-    a. Добавьте шаблон `login.html`:
+1. Добавьте шаблон страницы аутентификации `login.html`:
 
 ```html
 {% extends 'base.html' %}
@@ -81,7 +79,7 @@ flask run
 {% endblock %}
 ```
 
-    b. Добавьте функцию `login_page()`:
+2. Добавьте функцию `login_page()`:
 
 ```python
 def login_page():
@@ -95,7 +93,7 @@ def login_page():
     return render_template("login.html", username=username)
 ```
 
-    c. Добавьте функцию `logout()`:
+3. Добавьте функцию `logout()`:
 
 ```python
 def logout():
@@ -103,20 +101,20 @@ def logout():
     return redirect(url_for("index_page"))
 ```
 
-    d. Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
+4. Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
 
 ```python
 app.config["SECRET_KEY"] = "secret"
 ```
 
-    e. Добавьте соответствующие правила для URL в `create_app()`:
+5. Добавьте соответствующие правила для URL в `create_app()`:
 
 ```python
 app.add_url_rule("/login/", view_func=views.login_page, methods=["GET", "POST"])
 app.add_url_rule("/logout/", view_func=views.logout)
 ```
 
-    f. Добавьте в шаблон `index.html` навигационную панель перед заголовком:
+6. Добавьте в шаблон `index.html` навигационную панель перед заголовком:
 
 ```html
 <div class="menu">
@@ -129,31 +127,51 @@ app.add_url_rule("/logout/", view_func=views.logout)
 </div>
 ```
 
-2. Проверьте работу механизма аутентификации
+7. Проверьте работу механизма аутентификации
 
-3. Удалите Cookie и проверьте что это приводит к очистке данных сессии:
+8. Удалите Cookie и проверьте что это приводит к очистке данных сессии:
 
 ![Очистка Cookie](img/cookie.png)
 
-4. Сделайте коммит
-
-## Проверка данных и обработка ошибок
-
-Исправьте страницу аутентификации.
-
-Проверьте работу.
-
-Сделайте коммит.
+9. Сделайте коммит
 
 ## Создание админки
 
-Установите расширение `Flask-Admin`.
+1. Добавьте таблицу с данными студентами:
 
-Добавьте ссылку на админку.
+```python
+class Student(db.Model):
+    pk = db.Column(db.Integer, primary_key=True)
+    last_name = db.Column(db.String(30), nullable=False)
+    first_name = db.Column(db.String(30), nullable=False)
+    second_name = db.Column(db.String(30))
+```
 
-Проверьте работу.
+2. Добавьте админку в `create_app()`:
 
-Сделайте коммит.
+```python
+admin = Admin(app)
+admin.add_link(MenuLink(name='Главная', url="/"))
+admin.add_view(ModelView(models.Student, db.session))
+```
+
+и соответствующие импорты
+
+```python
+from flask_admin import Admin
+from flask_admin.menu import MenuLink
+from flask_admin.contrib.sqla import ModelView
+```
+
+3. Добавьте ссылку на админку в меню рядом с именем вошедшего пользователя:
+
+```html
+<a href="{{ url_for('admin.index') }}">Админка</a>
+```
+
+4. Проверьте работу админки
+
+5. Сделайте коммит
 
 ## Создание связей между таблицами
 
