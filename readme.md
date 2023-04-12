@@ -54,7 +54,7 @@ flask run
 
 1. Добавьте страницу аутентификации
 
-  a. Добавьте шаблон `login.html`:
+    a. Добавьте шаблон `login.html`:
 
 ```html
 {% extends 'base.html' %}
@@ -81,7 +81,7 @@ flask run
 {% endblock %}
 ```
 
-  b. Добавьте функцию `login_page()`:
+    b. Добавьте функцию `login_page()`:
 
 ```python
 def login_page():
@@ -95,7 +95,7 @@ def login_page():
     return render_template("login.html", username=username)
 ```
 
-  c. Добавьте функцию `logout()`:
+    c. Добавьте функцию `logout()`:
 
 ```python
 def logout():
@@ -103,20 +103,31 @@ def logout():
     return redirect(url_for("index_page"))
 ```
 
-  d. Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
+    d. Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
 
 ```python
 app.config["SECRET_KEY"] = "secret"
 ```
 
-  e. Добавьте соответствующие правила для URL в `create_app()`:
+    e. Добавьте соответствующие правила для URL в `create_app()`:
 
 ```python
 app.add_url_rule("/login/", view_func=views.login_page, methods=["GET", "POST"])
 app.add_url_rule("/logout/", view_func=views.logout)
 ```
 
-  f. Добавьте в базовый шаблон навигационную панель
+    f. Добавьте в шаблон `index.html` навигационную панель перед заголовком:
+
+```html
+<div class="menu">
+    {% if 'username' in session %}
+    <span>{{ session['username'] }}</span>
+    <a href="{{ url_for('logout') }}">Выход</a>
+    {% else %}
+    <a href="{{ url_for('login_page') }}">Вход</a>
+    {% endif %}
+</div>
+```
 
 2. Проверьте работу механизма аутентификации
 
