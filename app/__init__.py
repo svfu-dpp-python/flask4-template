@@ -1,20 +1,15 @@
-"""
-Заголовок пакета
-"""
 from flask import Flask
 
-from .database import db, migrate
+from .models import db, migrate
 from . import views
 
 
 def create_app():
-    """
-    Создание приложения Flask
-    """
     app = Flask(__name__)
+    app.config["SECRET_KEY"] = "secret"
 
     # База данных
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
     db.init_app(app)
     migrate.init_app(app, db)
 
