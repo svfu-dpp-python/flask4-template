@@ -10,7 +10,7 @@ Powershell:
 
 ```powershell
 py -m venv venv
-venv\scripts\activate.ps1
+.\venv\scripts\activate.ps1
 ```
 
 Командная строка:
@@ -103,20 +103,22 @@ def logout():
     return redirect(url_for("index_page"))
 ```
 
-4. Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
+4. Исправьте импорты недостающих функций во `views.py` из пакета `flask`
+
+5. Добавьте секретный ключ (для шифрования данных сессии) в `create_app()`:
 
 ```python
 app.config["SECRET_KEY"] = "secret"
 ```
 
-5. Добавьте соответствующие правила для URL в `create_app()`:
+6. Добавьте соответствующие правила для URL в `create_app()`:
 
 ```python
 app.add_url_rule("/login/", view_func=views.login_page, methods=["GET", "POST"])
 app.add_url_rule("/logout/", view_func=views.logout)
 ```
 
-6. Добавьте в шаблон `index.html` навигационную панель перед заголовком:
+7. Добавьте в шаблон `index.html` навигационную панель перед заголовком:
 
 ```html
 <div class="menu">
@@ -129,26 +131,19 @@ app.add_url_rule("/logout/", view_func=views.logout)
 </div>
 ```
 
-7. Проверьте работу механизма аутентификации
+8. Проверьте работу механизма аутентификации
 
-8. Удалите Cookie и проверьте что это приводит к очистке данных сессии:
+9. Удалите Cookie и проверьте что это приводит к очистке данных сессии:
 
 ![Очистка Cookie](img/cookie.png)
 
-9. Сделайте коммит
+10. Сделайте коммит
 
 ## Создание админки
 
-1. Добавьте файл для работы с базой данных `models.py`:
+1. Добавьте класс для таблицы студентов в файл `models.py`:
 
 ```python
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-
-db = SQLAlchemy()
-migrate = Migrate()
-
-
 class Student(db.Model):
     pk = db.Column(db.Integer(), primary_key=True)
     last_name = db.Column(db.String(30), nullable=False)
@@ -169,7 +164,7 @@ flask db upgrade
 3. Добавьте файл `admin.py`:
 
 ```python
-from flask_admin import Admin
+from flask_admin import admin
 from flask_admin.contrib.sqla import ModelView
 
 admin = Admin()
@@ -210,7 +205,7 @@ from .admin import Admin, StudentModelView
 class Group(db.Model):
     pk = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    students = db.relationship("Group", back_populates="group")
+    students = db.relationship("Student", back_populates="group")
 
     def __str__(self):
         return f"{self.name}"
@@ -219,28 +214,35 @@ class Group(db.Model):
 2. В класс `Student` добавьте внешний ключ:
 
 ```python
-group_pk = db.Column(db.Integer(), db.ForeignKey("group.pk"))
+group_pk = db.Column(db.Integer(), db.ForeignKey("group.pk", name="Group"))
 group = db.relationship("Group", back_populates="students")
 ```
 
-3. Добавьте описание страницы администрирования в файл `admin.py`:
+3. Выполните реструктуризацию данных:
+
+```powershell
+flask db migrate -m "Add Groups table"
+flask db upgrade
+```
+
+4. Добавьте описание страницы администрирования в файл `admin.py`:
 
 ```python
 class GroupModelView(ModelView):
     pass
 ```
 
-4. Добавьте страницу для учебных групп в админку в `create_app()`:
+5. Добавьте страницу для учебных групп в админку в `create_app()`:
 
 ```python
 admin.add_view(GroupModelView(models.Group, db.session))
 ```
 
-и исправьте импорты
+и добавьте `GroupModelView` в импорты из `.admin`
 
-5. Проверьте работу админки
+6. Проверьте работу админки
 
-6. Сделайте коммит
+7. Сделайте коммит
 
 ## Ссылки
 
