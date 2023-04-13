@@ -79,7 +79,7 @@ flask run
 {% endblock %}
 ```
 
-2. Добавьте функцию `login_page()`:
+2. Добавьте функцию `login_page()` во `views.py`:
 
 ```python
 def login_page():
@@ -87,13 +87,15 @@ def login_page():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        # Учебный пример проверки логина и пароля
+        # В реальных приложениях проверка выполняется с помощью KDF-функций
         if username == "admin" and password == "pass":
             session["username"] = username
             return redirect(url_for("index_page"))
     return render_template("login.html", username=username)
 ```
 
-3. Добавьте функцию `logout()`:
+3. Добавьте функцию `logout()` во `views.py`:
 
 ```python
 def logout():
@@ -137,49 +139,108 @@ app.add_url_rule("/logout/", view_func=views.logout)
 
 ## Создание админки
 
-1. Добавьте таблицу с данными студентами:
+1. Добавьте файл для работы с базой данных `models.py`:
 
 ```python
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+db = SQLAlchemy()
+migrate = Migrate()
+
+
 class Student(db.Model):
-    pk = db.Column(db.Integer, primary_key=True)
+    pk = db.Column(db.Integer(), primary_key=True)
     last_name = db.Column(db.String(30), nullable=False)
     first_name = db.Column(db.String(30), nullable=False)
     second_name = db.Column(db.String(30))
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
 ```
 
-2. Добавьте админку в `create_app()`:
+2. Выполните реструктуризацию данных:
+
+```powershell
+flask db migrate -m "Add Students table"
+flask db upgrade
+```
+
+3. Добавьте файл `admin.py`:
 
 ```python
-admin = Admin(app)
-admin.add_link(MenuLink(name='Главная', url="/"))
-admin.add_view(ModelView(models.Student, db.session))
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
+admin = Admin()
+
+
+class StudentModelView(ModelView):
+    pass
+```
+
+4. Добавьте админку в `create_app()`:
+
+```python
+admin.init_app(app)
+admin.add_view(StudentModelView(models.Student, db.session))
 ```
 
 и соответствующие импорты
 
 ```python
-from flask_admin import Admin
-from flask_admin.menu import MenuLink
-from flask_admin.contrib.sqla import ModelView
+from .admin import Admin, StudentModelView
 ```
 
-3. Добавьте ссылку на админку в меню рядом с именем вошедшего пользователя:
+5. Добавьте ссылку на админку в меню рядом с именем вошедшего пользователя:
 
 ```html
 <a href="{{ url_for('admin.index') }}">Админка</a>
 ```
 
-4. Проверьте работу админки
+6. Проверьте работу админки
 
-5. Сделайте коммит
+7. Сделайте коммит
 
 ## Создание связей между таблицами
 
-Создайте новую таблицу .
+1. Добавьте новую таблицу `Group` в `models.py`:
 
-Проверьте работу.
+```python
+class Group(db.Model):
+    pk = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(30), nullable=False)
+    students = db.relationship("Group", back_populates="group")
 
-Сделайте коммит.
+    def __str__(self):
+        return f"{self.name}"
+```
+
+2. В класс `Student` добавьте внешний ключ:
+
+```python
+group_pk = db.Column(db.Integer(), db.ForeignKey("group.pk"))
+group = db.relationship("Group", back_populates="students")
+```
+
+3. Добавьте описание страницы администрирования в файл `admin.py`:
+
+```python
+class GroupModelView(ModelView):
+    pass
+```
+
+4. Добавьте страницу для учебных групп в админку в `create_app()`:
+
+```python
+admin.add_view(GroupModelView(models.Group, db.session))
+```
+
+и исправьте импорты
+
+5. Проверьте работу админки
+
+6. Сделайте коммит
 
 ## Ссылки
 
@@ -189,3 +250,4 @@ from flask_admin.contrib.sqla import ModelView
 * [Документация Flask-Admin](https://flask-admin.readthedocs.io/)
 * [Документация SqlAlchemy](https://www.sqlalchemy.org/)
 * [Документация Alembic](https://alembic.sqlalchemy.org/)
+* [KDF-функции](https://en.wikipedia.org/wiki/Key_derivation_function)
