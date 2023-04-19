@@ -164,7 +164,7 @@ flask db upgrade
 3. Добавьте файл `admin.py`:
 
 ```python
-from flask_admin import admin
+from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
 admin = Admin()
@@ -184,7 +184,7 @@ admin.add_view(StudentModelView(models.Student, db.session))
 и соответствующие импорты
 
 ```python
-from .admin import Admin, StudentModelView
+from .admin import admin, StudentModelView
 ```
 
 5. Добавьте ссылку на админку в меню рядом с именем вошедшего пользователя:
