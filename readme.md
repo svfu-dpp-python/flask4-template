@@ -214,7 +214,7 @@ class Group(db.Model):
 2. В класс `Student` добавьте внешний ключ:
 
 ```python
-group_pk = db.Column(db.Integer(), db.ForeignKey("group.pk", name="Group"))
+group_pk = db.Column(db.ForeignKey("group.pk"))
 group = db.relationship("Group", back_populates="students")
 ```
 
@@ -225,11 +225,14 @@ flask db migrate -m "Add Groups table"
 flask db upgrade
 ```
 
-4. Добавьте описание страницы администрирования в файл `admin.py`:
+4. Добавьте класс `GroupModelView` и исправьте код класса `StudentModelView` в файле `admin.py`:
 
 ```python
 class GroupModelView(ModelView):
-    pass
+    passform_columns = ('name', 'students')
+
+class StudentModelView(ModelView):
+    form_columns = ('last_name', 'first_name', 'second_name', 'group')
 ```
 
 5. Добавьте страницу для учебных групп в админку в `create_app()`:
